@@ -1,5 +1,5 @@
 {
-  "name": "family-guard",
+  "name": "photoboothapp",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -21,6 +21,8 @@
     "@react-navigation/bottom-tabs": "^7.2.1",
     "@react-navigation/native": "^7.0.15",
     "@react-navigation/native-stack": "^7.2.1",
+    "axios": "^1.13.2",
+    "lucide-react-native": "^0.555.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
     "react-native": "0.78.0",

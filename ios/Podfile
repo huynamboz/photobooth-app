@@ -13,7 +13,7 @@ use_modular_headers!
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
 
-target 'FamilyGuard' do
+target 'photoboothapp' do
   config = use_native_modules!
 
   use_react_native!(

@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		04471F792D8056AD005C3064 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04471F782D8056AD005C3064 /* GoogleService-Info.plist */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		142C22192F139FC28A9D514D /* Pods_FamilyGuard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D97E5480B8463F2C5B455CFA /* Pods_FamilyGuard.framework */; };
 		3048965E2C6643E7AE77CBFC /* BricolageGrotesque-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D04A0BBB2E704A87B392D94D /* BricolageGrotesque-ExtraBold.ttf */; };
+		388E89BDB859DB9F304C0124 /* Pods_photoboothapp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 452A81D8E3A964E165299C2A /* Pods_photoboothapp.framework */; };
 		65D078871D4A4922A4B9B21F /* BricolageGrotesque-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6554E1A3188A4721B6292BCB /* BricolageGrotesque-SemiBold.ttf */; };
 		6CBFE04E76DE499588DCAAA8 /* BricolageGrotesque-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99A0C08C873D425D94FCC81A /* BricolageGrotesque-Light.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
@@ -24,21 +24,21 @@
 
 /* Begin PBXFileReference section */
 		04471F782D8056AD005C3064 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* FamilyGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FamilyGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = FamilyGuard/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FamilyGuard/Info.plist; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = FamilyGuard/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* photoboothapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = photoboothapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = photoboothapp/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = photoboothapp/Info.plist; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = photoboothapp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		192A490C8F564B84A3AF0C50 /* BricolageGrotesque-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BricolageGrotesque-Bold.ttf"; path = "../assets/fonts/BricolageGrotesque-Bold.ttf"; sourceTree = "<group>"; };
-		3B4392A12AC88292D35C810B /* Pods-FamilyGuard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FamilyGuard.debug.xcconfig"; path = "Target Support Files/Pods-FamilyGuard/Pods-FamilyGuard.debug.xcconfig"; sourceTree = "<group>"; };
+		3B4392A12AC88292D35C810B /* Pods-photoboothapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-photoboothapp.debug.xcconfig"; path = "Target Support Files/Pods-photoboothapp/Pods-photoboothapp.debug.xcconfig"; sourceTree = "<group>"; };
+		452A81D8E3A964E165299C2A /* Pods_photoboothapp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_photoboothapp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		56D8C7162635472E89DA5D0C /* BricolageGrotesque-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BricolageGrotesque-ExtraLight.ttf"; path = "../assets/fonts/BricolageGrotesque-ExtraLight.ttf"; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-FamilyGuard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FamilyGuard.release.xcconfig"; path = "Target Support Files/Pods-FamilyGuard/Pods-FamilyGuard.release.xcconfig"; sourceTree = "<group>"; };
+		5709B34CF0A7D63546082F79 /* Pods-photoboothapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-photoboothapp.release.xcconfig"; path = "Target Support Files/Pods-photoboothapp/Pods-photoboothapp.release.xcconfig"; sourceTree = "<group>"; };
 		6554E1A3188A4721B6292BCB /* BricolageGrotesque-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BricolageGrotesque-SemiBold.ttf"; path = "../assets/fonts/BricolageGrotesque-SemiBold.ttf"; sourceTree = "<group>"; };
-		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = FamilyGuard/AppDelegate.swift; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = FamilyGuard/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = photoboothapp/AppDelegate.swift; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = photoboothapp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		99A0C08C873D425D94FCC81A /* BricolageGrotesque-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BricolageGrotesque-Light.ttf"; path = "../assets/fonts/BricolageGrotesque-Light.ttf"; sourceTree = "<group>"; };
 		AE66291CCA6043939CF16D60 /* BricolageGrotesque-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BricolageGrotesque-Medium.ttf"; path = "../assets/fonts/BricolageGrotesque-Medium.ttf"; sourceTree = "<group>"; };
 		D04A0BBB2E704A87B392D94D /* BricolageGrotesque-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BricolageGrotesque-ExtraBold.ttf"; path = "../assets/fonts/BricolageGrotesque-ExtraBold.ttf"; sourceTree = "<group>"; };
-		D97E5480B8463F2C5B455CFA /* Pods_FamilyGuard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FamilyGuard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F3EC5048CB9A4E55BF5242BB /* BricolageGrotesque-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "BricolageGrotesque-Regular.ttf"; path = "../assets/fonts/BricolageGrotesque-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,14 +58,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				142C22192F139FC28A9D514D /* Pods_FamilyGuard.framework in Frameworks */,
+				388E89BDB859DB9F304C0124 /* Pods_photoboothapp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* FamilyGuard */ = {
+		13B07FAE1A68108700A75B9A /* photoboothapp */ = {
 			isa = PBXGroup;
 			children = (
 				046D0C012D8036C000D2AAEB /* module */,
@@ -75,14 +75,14 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
-			name = FamilyGuard;
+			name = photoboothapp;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				D97E5480B8463F2C5B455CFA /* Pods_FamilyGuard.framework */,
+				452A81D8E3A964E165299C2A /* Pods_photoboothapp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -98,7 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				04471F782D8056AD005C3064 /* GoogleService-Info.plist */,
-				13B07FAE1A68108700A75B9A /* FamilyGuard */,
+				13B07FAE1A68108700A75B9A /* photoboothapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -113,7 +113,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* FamilyGuard.app */,
+				13B07F961A680F5B00A75B9A /* photoboothapp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -135,8 +135,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-FamilyGuard.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-FamilyGuard.release.xcconfig */,
+				3B4392A12AC88292D35C810B /* Pods-photoboothapp.debug.xcconfig */,
+				5709B34CF0A7D63546082F79 /* Pods-photoboothapp.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -144,9 +144,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* FamilyGuard */ = {
+		13B07F861A680F5B00A75B9A /* photoboothapp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "FamilyGuard" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "photoboothapp" */;
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -164,9 +164,9 @@
 			fileSystemSynchronizedGroups = (
 				046D0C012D8036C000D2AAEB /* module */,
 			);
-			name = FamilyGuard;
-			productName = FamilyGuard;
-			productReference = 13B07F961A680F5B00A75B9A /* FamilyGuard.app */;
+			name = photoboothapp;
+			productName = photoboothapp;
+			productReference = 13B07F961A680F5B00A75B9A /* photoboothapp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -182,7 +182,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "FamilyGuard" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "photoboothapp" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -195,7 +195,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* FamilyGuard */,
+				13B07F861A680F5B00A75B9A /* photoboothapp */,
 			);
 		};
 /* End PBXProject section */
@@ -244,15 +244,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FamilyGuard/Pods-FamilyGuard-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-photoboothapp/Pods-photoboothapp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FamilyGuard/Pods-FamilyGuard-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-photoboothapp/Pods-photoboothapp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FamilyGuard/Pods-FamilyGuard-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-photoboothapp/Pods-photoboothapp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5810912D8A2628E24CF294A2 /* [CP-User] [RNFB] Core Configuration */ = {
@@ -283,7 +283,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-FamilyGuard-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-photoboothapp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -296,15 +296,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FamilyGuard/Pods-FamilyGuard-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-photoboothapp/Pods-photoboothapp-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FamilyGuard/Pods-FamilyGuard-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-photoboothapp/Pods-photoboothapp-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FamilyGuard/Pods-FamilyGuard-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-photoboothapp/Pods-photoboothapp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -323,14 +323,15 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-FamilyGuard.debug.xcconfig */;
+			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-photoboothapp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = C57S55A2P7;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = FamilyGuard/Info.plist;
+				INFOPLIST_FILE = photoboothapp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "photobooth app";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -343,8 +344,8 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = FamilyGuard;
-				SWIFT_OBJC_BRIDGING_HEADER = "module/FamilyGuard-Bridging-Header.h";
+				PRODUCT_NAME = photoboothapp;
+				SWIFT_OBJC_BRIDGING_HEADER = "module/photoboothapp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -353,13 +354,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-FamilyGuard.release.xcconfig */;
+			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-photoboothapp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = C57S55A2P7;
-				INFOPLIST_FILE = FamilyGuard/Info.plist;
+				INFOPLIST_FILE = photoboothapp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "photobooth app";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -372,8 +374,8 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = FamilyGuard;
-				SWIFT_OBJC_BRIDGING_HEADER = "module/FamilyGuard-Bridging-Header.h";
+				PRODUCT_NAME = photoboothapp;
+				SWIFT_OBJC_BRIDGING_HEADER = "module/photoboothapp-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -556,7 +558,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "FamilyGuard" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "photoboothapp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -565,7 +567,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "FamilyGuard" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "photoboothapp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
-import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface ButtonProps {
-  icon?: ReactNode | ImageSourcePropType;
+  icon?: ReactNode;
   text: string;
   variant?: keyof typeof buttonVariants;
   color?: string;
@@ -73,17 +73,9 @@ const Button = ({
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <View className={`flex-row justify-center items-center ${contentClassName}`}>
-        {icon && (
-          <View className="mr-3">
-            {React.isValidElement(icon) ? (
-              icon
-            ) : (
-              <Image source={icon as ImageSourcePropType} className="w-6 h-6" />
-            )}
-          </View>
-        )}
+      <View className={`flex-row gap-2 justify-center items-center ${contentClassName}`}>
         <Text className={textStyle}>{text}</Text>
+        {icon ? icon : null}
       </View>
     </TouchableOpacity>
   );

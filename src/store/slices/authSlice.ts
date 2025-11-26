@@ -1,52 +1,71 @@
 import auth from '@/config/firebaseAuth';
-import db from '@/config/firebaseDb';
+import { authService } from '@/services';
+import { setAuthToken } from '@/services/apiClient';
 import { zustandMMKVStorage } from '@/store/mmkv';
 import { AuthStore } from '@/types/auth.type';
-import {
-  onAuthStateChanged,
-  signInWithCredential,
-  signInWithEmailAndPassword,
-  signOut,
-} from '@react-native-firebase/auth';
-import database, { get, ref } from '@react-native-firebase/database';
+import { signInWithCredential, signOut } from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 import { AccessToken, LoginManager } from 'react-native-fbsdk-next';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // Initial state
       token: null,
       user: null,
       isLoading: false,
       isAuthenticated: false,
 
-      // Firebase login with email/password
+      // REST login with email/password
       login: async (email: string, password: string) => {
         set({ isLoading: true });
         try {
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          const token = await userCredential.user.getIdToken();
+          const { token, user } = await authService.login({ email, password });
+          setAuthToken(token);
 
-          // Get additional user data from Realtime Database if needed
-          const userSnapshot = await ref(db, `users/${userCredential.user.uid}`).once('value');
-
-          const userData = userSnapshot.val() || {};
           set({
-            token: token,
-            user: {
-              id: userCredential.user.uid,
-              email: userCredential.user.email,
-              name: userCredential.user.displayName || userData.name || 'User',
-              ...userData,
-            },
+            token,
+            user,
             isAuthenticated: true,
             isLoading: false,
           });
         } catch (error) {
           console.error('Login error:', error);
-          set({ isLoading: false });
+          setAuthToken(null);
+          set({
+            isLoading: false,
+            isAuthenticated: false,
+            token: null,
+          });
+          throw error;
+        }
+      },
+
+      register: async ({ name, email, password }) => {
+        set({ isLoading: true });
+        try {
+          const { token, user } = await authService.register({
+            name: name.trim(),
+            email: email.trim(),
+            password,
+          });
+          setAuthToken(token);
+          set({
+            token,
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (error) {
+          console.error('Register error:', error);
+          setAuthToken(null);
+          set({
+            isLoading: false,
+            isAuthenticated: false,
+            token: null,
+          });
           throw error;
         }
       },
@@ -186,61 +205,52 @@ const useAuthStore = create<AuthStore>()(
       // Check current auth state (useful for app initialization)
       checkAuthState: async () => {
         set({ isLoading: true });
-        return new Promise((resolve) => {
-          const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: any) => {
-            unsubscribe();
-            if (firebaseUser) {
-              try {
-                const token = await firebaseUser.getIdToken();
-                const userRef = ref(db, `users/${firebaseUser.uid}`);
-                const userSnapshot = await get(userRef);
-                const userData = userSnapshot.val() || {};
-
-                set({
-                  token: token,
-                  user: {
-                    id: firebaseUser.uid,
-                    email: firebaseUser.email,
-                    name: firebaseUser.displayName || userData.name || userData.fullName || 'User',
-                    photoURL: firebaseUser.photoURL || userData.photoURL,
-                    ...userData,
-                  },
-                  isAuthenticated: true,
-                  isLoading: false,
-                });
-                resolve(true);
-              } catch (error) {
-                console.error('Check auth state error:', error);
-                set({ isLoading: false });
-                resolve(false);
-              }
-            } else {
-              set({
-                token: null,
-                user: null,
-                isAuthenticated: false,
-                isLoading: false,
-              });
-              resolve(false);
-            }
-          });
-        });
-      },
-
-      logout: async () => {
-        set({ isLoading: true });
         try {
-          await signOut(auth);
+          const currentToken = get().token;
+          const currentUser = get().user;
+
+          if (currentToken && currentUser) {
+            setAuthToken(currentToken);
+            set({
+              isAuthenticated: true,
+              isLoading: false,
+            });
+            return true;
+          }
+
           set({
             token: null,
             user: null,
             isAuthenticated: false,
             isLoading: false,
           });
+          return false;
+        } catch (error) {
+          console.error('Check auth state error:', error);
+          set({
+            token: null,
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+          return false;
+        }
+      },
+
+      logout: async () => {
+        set({ isLoading: true });
+        try {
+          await signOut(auth);
         } catch (error) {
           console.error('Logout error:', error);
-          set({ isLoading: false });
-          throw error;
+        } finally {
+          setAuthToken(null);
+          set({
+            token: null,
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
         }
       },
 

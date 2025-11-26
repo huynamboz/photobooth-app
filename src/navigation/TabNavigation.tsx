@@ -1,8 +1,9 @@
-import { ICON, ROUTE_NAME } from '@/constants';
+import { ROUTE_NAME } from '@/constants';
 import HomeScreen from '@/pages/Home';
+import SettingsScreen from '@/pages/Settings';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Home as HomeIcon, Settings as SettingsIcon } from 'lucide-react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -10,22 +11,29 @@ const TabNavigation = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        headerShown: false,
         tabBarIcon: ({ color, size }) => {
-          let iconName;
-          if (route.name === ROUTE_NAME.HOMESCREEN) {
-            iconName = ICON.HOME;
-          }
-
-          return <Icon name={iconName as string} size={size} color={color} />;
+          const iconMap: Record<string, React.ComponentType<{ color: string; size: number }>> = {
+            [ROUTE_NAME.HOMESCREEN]: HomeIcon,
+            [ROUTE_NAME.SETTINGS]: SettingsIcon,
+          };
+          const IconComponent = iconMap[route.name] ?? HomeIcon;
+          return <IconComponent color={color} size={size} strokeWidth={2} className="ml-3" />;
         },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: '#16a34a',
+        tabBarInactiveTintColor: '#9ca3af',
       })}
     >
-      <Tab.Screen name="HomeScreen" component={HomeScreen} />
-      <Tab.Screen name="HomeScreen1" component={HomeScreen} />
-      <Tab.Screen name="HomeScreen2" component={HomeScreen} />
-      <Tab.Screen name="HomeScreen3" component={HomeScreen} />
+      <Tab.Screen
+        name={ROUTE_NAME.HOMESCREEN}
+        component={HomeScreen}
+        options={{ title: 'Trang chủ' }}
+      />
+      <Tab.Screen
+        name={ROUTE_NAME.SETTINGS}
+        component={SettingsScreen}
+        options={{ title: 'Cài đặt' }}
+      />
     </Tab.Navigator>
   );
 };

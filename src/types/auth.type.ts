@@ -14,6 +14,7 @@ export interface AuthStore {
   isAuthenticated: boolean;
 
   login: (email: string, password: string) => Promise<void>;
+  register: (payload: { name: string; email: string; password: string }) => Promise<void>;
   loginWithGithub: () => Promise<void>;
   loginWithFacebook: () => Promise<void>;
   loginWithX: () => Promise<void>;
