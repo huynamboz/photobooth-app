@@ -18,7 +18,7 @@ const TabNavigation = () => {
             [ROUTE_NAME.SETTINGS]: SettingsIcon,
           };
           const IconComponent = iconMap[route.name] ?? HomeIcon;
-          return <IconComponent color={color} size={size} strokeWidth={2} className="ml-3" />;
+          return <IconComponent color={color} size={size} />;
         },
         tabBarActiveTintColor: '#16a34a',
         tabBarInactiveTintColor: '#9ca3af',

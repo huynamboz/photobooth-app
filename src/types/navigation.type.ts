@@ -7,6 +7,8 @@ export type AuthStackParamList = {
 
 export type AppStackParamList = {
   HomeScreen: undefined;
+  QRScanner: undefined;
+  Payment: { qrData: string };
 };
 
 export type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;

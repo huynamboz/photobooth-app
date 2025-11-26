@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
-const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:3000/api/v1';
+const API_BASE_URL = process.env.API_BASE_URL ?? 'https://photobooth.kazekageiii.xyz/api/v1';
 const REQUEST_TIMEOUT = 15000;
 
 export interface ApiErrorPayload {

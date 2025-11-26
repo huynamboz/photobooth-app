@@ -1,3 +1,5 @@
+import PaymentScreen from '@/pages/Payment';
+import QRScannerScreen from '@/pages/QRScanner';
 import { useAuthStore } from '@/store';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
@@ -42,7 +44,11 @@ const AppNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isAuthenticated ? (
-        <Stack.Screen name="app" component={TabNavigation} />
+        <>
+          <Stack.Screen name="app" component={TabNavigation} />
+          <Stack.Screen name="QRScanner" component={QRScannerScreen} />
+          <Stack.Screen name="Payment" component={PaymentScreen} />
+        </>
       ) : (
         <Stack.Screen name="auth" component={AuthNavigvation} />
       )}

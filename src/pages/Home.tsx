@@ -1,9 +1,14 @@
 import { Button } from '@/components/common/Button';
 import { useAuthStore } from '@/store';
+import { AppStackParamList } from '@/types/navigation.type';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Aperture, ArrowRight, Camera, CreditCard, MapPin, QrCode } from 'lucide-react-native';
 import React, { useMemo } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+type HomeNavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
 const insights = [
   { id: 'sessions', label: 'Lượt chụp', value: '24', sub: 'Trong tháng', icon: Camera },
@@ -53,6 +58,7 @@ const bookings = [
 ] as const;
 
 const HomeScreen = () => {
+  const navigation = useNavigation<HomeNavigationProp>();
   const user = useAuthStore((state) => state.user);
 
   const greeting = useMemo(() => {
@@ -144,9 +150,10 @@ const HomeScreen = () => {
           </View>
           <Button
             text="Chụp hình ngay"
-            icon={<QrCode color="#fff" size={20} strokeWidth={2} className="ml-3" />}
+            icon={<QrCode color="#fff" size={20} strokeWidth={2} />}
             className="mt-5"
             contentClassName="justify-center"
+            onPress={() => navigation.navigate('QRScanner')}
           />
         </View>
 
