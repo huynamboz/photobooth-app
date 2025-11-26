@@ -1,5 +1,5 @@
-import PaymentScreen from '@/pages/Payment';
 import PhotoboothControlScreen from '@/pages/PhotoboothControl';
+import PrepareCaptureScreen from '@/pages/PrepareCapture';
 import QRScannerScreen from '@/pages/QRScanner';
 import TopUpPointsScreen from '@/pages/TopUpPoints';
 import { useAuthStore } from '@/store';
@@ -49,7 +49,7 @@ const AppNavigation = () => {
         <>
           <Stack.Screen name="app" component={TabNavigation} />
           <Stack.Screen name="QRScanner" component={QRScannerScreen} />
-          <Stack.Screen name="Payment" component={PaymentScreen} />
+          <Stack.Screen name="PrepareCapture" component={PrepareCaptureScreen} />
           <Stack.Screen name="PhotoboothControl" component={PhotoboothControlScreen} />
           <Stack.Screen name="TopUpPoints" component={TopUpPointsScreen} />
         </>

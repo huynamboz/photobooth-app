@@ -1,116 +1,208 @@
 import { Button } from '@/components/common/Button';
 import { ROUTE_NAME } from '@/constants';
+import { assetService, photoboothService, type FilterAsset } from '@/services';
 import { AppStackParamList } from '@/types/navigation.type';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Sparkles, X } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Dimensions, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Image,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const FILTER_CARD_WIDTH = (SCREEN_WIDTH - 48 - 12) / 2; // 48 = padding (24*2), 12 = gap
+// 3 columns: 48 = padding (24*2), 24 = gap (12*2), 3 = number of columns
+const FILTER_CARD_WIDTH = (SCREEN_WIDTH - 48 - 24) / 3;
 
+type PhotoboothControlRouteProp = RouteProp<AppStackParamList, 'PhotoboothControl'>;
 type PhotoboothControlNavigationProp = NativeStackNavigationProp<
   AppStackParamList,
   'PhotoboothControl'
 >;
 
-type FilterOption = {
-  id: string;
-  name: string;
-  preview: string;
-  description: string;
+// Default "no filter" option
+const DEFAULT_FILTER: FilterAsset = {
+  id: 'none',
+  imageUrl: '',
+  publicId: '',
+  type: 'filter',
+  filterType: 'none',
+  scale: '1.00',
+  offset_y: '0.00',
+  anchor_idx: 0,
+  left_idx: 0,
+  right_idx: 0,
+  createdAt: '',
+  updatedAt: '',
 };
-
-const filters: FilterOption[] = [
-  {
-    id: 'normal',
-    name: 'Bình thường',
-    preview: '📷',
-    description: 'Không áp dụng filter',
-  },
-  {
-    id: 'vintage',
-    name: 'Vintage',
-    preview: '🎞️',
-    description: 'Phong cách cổ điển',
-  },
-  {
-    id: 'bw',
-    name: 'Đen trắng',
-    preview: '⚫',
-    description: 'Tone màu cổ điển',
-  },
-  {
-    id: 'vivid',
-    name: 'Sống động',
-    preview: '🌈',
-    description: 'Màu sắc rực rỡ',
-  },
-  {
-    id: 'warm',
-    name: 'Ấm áp',
-    preview: '☀️',
-    description: 'Tone màu ấm',
-  },
-  {
-    id: 'cool',
-    name: 'Mát mẻ',
-    preview: '❄️',
-    description: 'Tone màu lạnh',
-  },
-  {
-    id: 'dramatic',
-    name: 'Kịch tính',
-    preview: '🎭',
-    description: 'Độ tương phản cao',
-  },
-  {
-    id: 'soft',
-    name: 'Nhẹ nhàng',
-    preview: '💫',
-    description: 'Tone màu mềm mại',
-  },
-];
 
 const PhotoboothControlScreen = () => {
   const navigation = useNavigation<PhotoboothControlNavigationProp>();
-  const [selectedFilter, setSelectedFilter] = useState<string>('normal');
+  const route = useRoute<PhotoboothControlRouteProp>();
+  const { sessionId, photoboothId } = route.params;
+  // photoboothId may be used in future features
+  const [filters, setFilters] = useState<FilterAsset[]>([DEFAULT_FILTER]);
+  const [selectedFilter, setSelectedFilter] = useState<string>('none');
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isLoadingFilters, setIsLoadingFilters] = useState(true);
+  const [filterError, setFilterError] = useState<string | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
+  const [currentFilterIds, setCurrentFilterIds] = useState<string[]>([]);
+  const [isChangingFilter, setIsChangingFilter] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
-  const handleStartCapture = () => {
-    // TODO: Implement capture logic
-    console.log('Starting capture with filter:', selectedFilter);
-    // Navigate to capture screen or trigger capture
+  const handleStartCapture = async () => {
+    if (isCapturing) return;
+
+    setIsCapturing(true);
+    try {
+      console.log('Starting capture for session:', sessionId, 'photobooth:', photoboothId);
+      const response = await photoboothService.startCapture(sessionId);
+      console.log('Start capture response:', response);
+
+      // Show success message
+      Alert.alert('Thành công', 'Đã gửi lệnh chụp hình. Photobooth sẽ bắt đầu chụp ảnh.', [
+        { text: 'OK' },
+      ]);
+    } catch (error) {
+      console.error('Error starting capture:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Không thể bắt đầu chụp hình. Vui lòng thử lại.';
+      Alert.alert('Lỗi', errorMessage, [{ text: 'OK' }]);
+    } finally {
+      setIsCapturing(false);
+    }
   };
 
   const handleCancelPress = () => {
     setShowCancelModal(true);
   };
 
-  const handleConfirmCancel = () => {
-    setShowCancelModal(false);
-    // Reset navigation to Home
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: 'app',
-            state: {
-              routes: [{ name: ROUTE_NAME.HOMESCREEN }],
-              index: 0,
+  const handleConfirmCancel = async () => {
+    if (isCancelling) return;
+
+    setIsCancelling(true);
+    try {
+      await photoboothService.cancelSession(sessionId);
+      setShowCancelModal(false);
+      // Reset navigation to Home
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'app',
+              state: {
+                routes: [{ name: ROUTE_NAME.HOMESCREEN }],
+                index: 0,
+              },
             },
-          },
-        ],
-      }),
-    );
+          ],
+        }),
+      );
+    } catch (error) {
+      console.error('Error cancelling session:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Không thể hủy phiên chụp. Vui lòng thử lại.';
+      Alert.alert('Lỗi', errorMessage, [{ text: 'OK' }]);
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   const handleCancelModal = () => {
     setShowCancelModal(false);
   };
+
+  const handleFilterSelect = async (filterId: string) => {
+    if (isChangingFilter || filterId === selectedFilter) return;
+
+    setIsChangingFilter(true);
+    try {
+      // If selecting "none", remove all current filters
+      if (filterId === 'none') {
+        // Remove all current filters
+        const removePromises = currentFilterIds.map((id) =>
+          photoboothService.removeFilter(sessionId, id),
+        );
+        if (removePromises.length > 0) {
+          await Promise.all(removePromises);
+        }
+        setCurrentFilterIds([]);
+        setSelectedFilter('none');
+      } else {
+        // Remove all current filters first (to ensure only one filter is active)
+        const removePromises = currentFilterIds.map((id) =>
+          photoboothService.removeFilter(sessionId, id),
+        );
+        if (removePromises.length > 0) {
+          await Promise.all(removePromises);
+        }
+
+        // Add the new filter
+        await photoboothService.addFilter(sessionId, filterId);
+        setCurrentFilterIds([filterId]);
+        setSelectedFilter(filterId);
+      }
+    } catch (error) {
+      console.error('Error changing filter:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Không thể thay đổi filter. Vui lòng thử lại.';
+      Alert.alert('Lỗi', errorMessage, [{ text: 'OK' }]);
+    } finally {
+      setIsChangingFilter(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      setIsLoadingFilters(true);
+      setFilterError(null);
+      try {
+        const response = await assetService.getFilters({ page: 1, limit: 10 });
+        // Add default "none" filter at the beginning
+        setFilters([DEFAULT_FILTER, ...response.data]);
+      } catch (error) {
+        console.error('Error fetching filters:', error);
+        setFilterError('Không thể tải danh sách filter. Vui lòng thử lại.');
+        // Keep default filter even on error
+        setFilters([DEFAULT_FILTER]);
+      } finally {
+        setIsLoadingFilters(false);
+      }
+    };
+
+    const fetchCurrentSession = async () => {
+      try {
+        const session = await photoboothService.getCurrentSession();
+        if (session && session.id === sessionId) {
+          // Sync current filterIds with session
+          const filterIds = session.filterIds || [];
+          setCurrentFilterIds(filterIds);
+          // If there's a filter selected, set it as selected
+          if (filterIds.length > 0) {
+            setSelectedFilter(filterIds[0]);
+          } else {
+            setSelectedFilter('none');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching current session:', error);
+      }
+    };
+
+    fetchFilters();
+    fetchCurrentSession();
+  }, [sessionId]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -131,76 +223,80 @@ const PhotoboothControlScreen = () => {
       >
         {/* Filter Selection Section */}
         <View className="px-6 pt-6">
-          <View className="flex-row items-center mb-4">
-            <Sparkles color="#16a34a" size={20} />
+          <View className="flex-row items-center mb-3">
+            <Sparkles color="#16a34a" size={18} />
             <Text className="text-base font-semibold text-foreground ml-2">Chọn Filter</Text>
           </View>
-          <Text className="text-sm text-muted-foreground mb-6">
-            Áp dụng filter để tạo phong cách riêng cho bức ảnh của bạn
-          </Text>
 
           {/* Filter Grid */}
-          <View className="flex-row flex-wrap" style={{ gap: 12 }}>
-            {filters.map((filter) => {
-              const isSelected = selectedFilter === filter.id;
-              return (
-                <TouchableOpacity
-                  key={filter.id}
-                  onPress={() => setSelectedFilter(filter.id)}
-                  style={{ width: FILTER_CARD_WIDTH }}
-                  className={`rounded-2xl border-2 p-4 ${
-                    isSelected ? 'border-primary bg-primary/5' : 'border-border bg-gray-50'
-                  }`}
-                >
-                  <View className="items-center mb-2">
-                    <Text className="text-4xl mb-2">{filter.preview}</Text>
-                    <Text
-                      className={`text-sm font-semibold ${
-                        isSelected ? 'text-primary' : 'text-foreground'
-                      }`}
-                    >
-                      {filter.name}
-                    </Text>
-                    <Text className="text-xs text-muted-foreground mt-1 text-center">
-                      {filter.description}
-                    </Text>
-                  </View>
-                  {isSelected && (
-                    <View className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full items-center justify-center">
-                      <Text className="text-white text-xs font-bold">✓</Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-
-        {/* Preview Section */}
-        <View className="px-6 mt-6">
-          <View className="bg-gray-100 rounded-3xl p-8 items-center justify-center min-h-[220px] border border-gray-200">
-            <View className="bg-white rounded-2xl p-6 mb-4 shadow-sm">
-              <Text className="text-6xl text-center">
-                {filters.find((f) => f.id === selectedFilter)?.preview || '📷'}
-              </Text>
+          {isLoadingFilters ? (
+            <View className="py-8 items-center justify-center">
+              <ActivityIndicator size="large" color="#16a34a" />
+              <Text className="text-sm text-muted-foreground mt-4">Đang tải filters...</Text>
             </View>
-            <Text className="text-lg font-semibold text-foreground mb-1">
-              {filters.find((f) => f.id === selectedFilter)?.name || 'Bình thường'}
-            </Text>
-            <Text className="text-sm text-muted-foreground text-center">
-              {filters.find((f) => f.id === selectedFilter)?.description || ''}
-            </Text>
-          </View>
+          ) : filterError ? (
+            <View className="py-8 items-center justify-center">
+              <Text className="text-sm text-red-600 text-center">{filterError}</Text>
+            </View>
+          ) : (
+            <View className="flex-row flex-wrap" style={{ gap: 12 }}>
+              {filters.map((filter) => {
+                const isSelected = selectedFilter === filter.id;
+                const isNoneFilter = filter.id === 'none';
+                return (
+                  <TouchableOpacity
+                    key={filter.id}
+                    onPress={() => handleFilterSelect(filter.id)}
+                    style={{ width: FILTER_CARD_WIDTH }}
+                    className={`rounded-xl border-2 p-2.5 ${
+                      isSelected ? 'border-primary bg-primary/5' : 'border-border bg-gray-50'
+                    } ${isChangingFilter ? 'opacity-50' : ''}`}
+                    disabled={isChangingFilter}
+                  >
+                    <View className="items-center">
+                      {isNoneFilter ? (
+                        <View className="w-12 h-12 rounded-lg bg-gray-200 items-center justify-center mb-1.5">
+                          <Text className="text-2xl">📷</Text>
+                        </View>
+                      ) : (
+                        <View className="w-12 h-12 rounded-lg overflow-hidden mb-1.5 bg-gray-100">
+                          <Image
+                            source={{ uri: filter.imageUrl }}
+                            style={{ width: '100%', height: '100%' }}
+                            resizeMode="cover"
+                          />
+                        </View>
+                      )}
+                      <Text
+                        className={`text-xs font-medium text-center ${
+                          isSelected ? 'text-primary' : 'text-foreground'
+                        }`}
+                        numberOfLines={1}
+                      >
+                        {isNoneFilter ? 'Không filter' : filter.filterType || 'Filter'}
+                      </Text>
+                    </View>
+                    {isSelected && (
+                      <View className="absolute top-1.5 right-1.5 w-4 h-4 bg-primary rounded-full items-center justify-center">
+                        <Text className="text-white text-[10px] font-bold">✓</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
         </View>
       </ScrollView>
 
       {/* Bottom Action Buttons */}
       <View className="px-6 pt-4 pb-6 border-t border-border bg-white">
         <Button
-          text="Bắt đầu chụp"
+          text={isCapturing ? 'Đang chụp...' : 'Bắt đầu chụp'}
           onPress={handleStartCapture}
           className="w-full mb-3"
           icon={<Sparkles color="#fff" size={20} />}
+          disabled={isCapturing}
         />
         <Button
           text="Hủy chụp"
@@ -228,21 +324,35 @@ const PhotoboothControlScreen = () => {
                 <X color="#6b7280" size={20} />
               </TouchableOpacity>
             </View>
-            <Text className="text-base text-muted-foreground mb-6">
-              Bạn có chắc chắn muốn hủy chụp hình? Thao tác này không thể hoàn tác.
-            </Text>
+            <View className="mb-6">
+              <Text className="text-base text-muted-foreground mb-3">
+                Bạn có chắc chắn muốn hủy chụp hình? Thao tác này không thể hoàn tác.
+              </Text>
+              <View className="bg-red-50 rounded-xl p-3 border border-red-200">
+                <Text className="text-sm font-semibold text-red-900 mb-1">⚠️ Lưu ý quan trọng</Text>
+                <Text className="text-sm text-red-800">
+                  Nếu hủy chụp hình, điểm đã sử dụng sẽ không được hoàn lại.
+                </Text>
+              </View>
+            </View>
             <View className="flex-row gap-3">
               <TouchableOpacity
                 onPress={handleCancelModal}
                 className="flex-1 border border-border rounded-xl py-3 items-center"
+                disabled={isCancelling}
               >
                 <Text className="text-base font-medium text-foreground">Không</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleConfirmCancel}
                 className="flex-1 bg-destructive rounded-xl py-3 items-center"
+                disabled={isCancelling}
               >
-                <Text className="text-base font-medium text-white">Có, hủy chụp</Text>
+                {isCancelling ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text className="text-base font-medium text-white">Có, hủy chụp</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>

@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'https://2fd2kqkt-3000.asse.devtunnels.ms/api/v1';
+
 const REQUEST_TIMEOUT = 15000;
 
 export interface ApiErrorPayload {

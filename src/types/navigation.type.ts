@@ -8,8 +8,8 @@ export type AuthStackParamList = {
 export type AppStackParamList = {
   HomeScreen: undefined;
   QRScanner: undefined;
-  Payment: { qrData: string };
-  PhotoboothControl: undefined;
+  PrepareCapture: { qrData: string };
+  PhotoboothControl: { sessionId: string; photoboothId: string };
   TopUpPoints: undefined;
 };
 

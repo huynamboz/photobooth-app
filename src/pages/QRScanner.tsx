@@ -22,8 +22,8 @@ const QRScannerScreen = () => {
         console.log('onCodeScanned', codes);
         console.log('onCodeScanned value', codes[0].value);
         const qrData = codes[0].value;
-        // Navigate to Payment screen with QR data
-        navigation.navigate('Payment', { qrData });
+        // Navigate to PrepareCapture screen with QR data
+        navigation.navigate('PrepareCapture', { qrData });
       }
     },
   });

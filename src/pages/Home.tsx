@@ -1,11 +1,20 @@
 import { Button } from '@/components/common/Button';
+import { photoboothService } from '@/services';
 import { useAuthStore } from '@/store';
 import { AppStackParamList } from '@/types/navigation.type';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Aperture, ArrowRight, Camera, CreditCard, MapPin, QrCode } from 'lucide-react-native';
-import React, { useMemo } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Aperture,
+  ArrowRight,
+  Camera,
+  CreditCard,
+  MapPin,
+  Play,
+  QrCode,
+} from 'lucide-react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type HomeNavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -36,26 +45,13 @@ const highlightFeatures = [
   },
 ] as const;
 
-const inspirationShots = [1, 2, 3, 4];
-
-const bookings = [
-  {
-    id: 'b1',
-    title: 'Date Night Moodboard',
-    studio: 'Studio D1 • Nguyễn Huệ',
-    time: 'Hôm nay • 18:30',
-  },
-  {
-    id: 'b2',
-    title: 'Retro Flash Concept',
-    studio: 'Studio Q10 • Japan Town',
-    time: 'Ngày mai • 14:00',
-  },
-] as const;
-
 const HomeScreen = () => {
   const navigation = useNavigation<HomeNavigationProp>();
   const user = useAuthStore((state) => state.user);
+  const getCurrentUser = useAuthStore((state) => state.getCurrentUser);
+  const [currentSession, setCurrentSession] = useState<any>(null);
+  const [isLoadingSession, setIsLoadingSession] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
@@ -63,6 +59,44 @@ const HomeScreen = () => {
     if (hour < 18) return 'Buổi chiều vui vẻ';
     return 'Chào buổi tối';
   }, []);
+
+  useEffect(() => {
+    fetchCurrentSession();
+  }, []);
+
+  const fetchCurrentSession = async () => {
+    setIsLoadingSession(true);
+    try {
+      const session = await photoboothService.getCurrentSession();
+      setCurrentSession(session);
+    } catch (error) {
+      console.error('Error fetching current session:', error);
+      setCurrentSession(null);
+    } finally {
+      setIsLoadingSession(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      // Reload user info and current session
+      await Promise.all([getCurrentUser(), fetchCurrentSession()]);
+    } catch (error) {
+      console.error('Error refreshing:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleContinueCapture = () => {
+    if (currentSession) {
+      navigation.navigate('PhotoboothControl', {
+        sessionId: currentSession.id,
+        photoboothId: currentSession.photoboothId,
+      });
+    }
+  };
 
   const insights = useMemo(
     () => [
@@ -81,7 +115,13 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 20 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#16a34a" />
+        }
+      >
         <View className="mt-6 rounded-3xl overflow-hidden bg-white shadow-xs">
           <Image
             source={{
@@ -137,6 +177,59 @@ const HomeScreen = () => {
           ))}
         </ScrollView>
 
+        {/* Current Session Card */}
+        {!isLoadingSession && currentSession && (
+          <View className="bg-white rounded-2xl border border-[#e5e7eb] px-4 py-4 mb-6 shadow-sm">
+            <View className="flex-row items-center justify-between mb-4">
+              <View className="flex-row items-center flex-1">
+                <View className="w-12 h-12 rounded-2xl bg-[#ecfdf3] justify-center items-center mr-4">
+                  <Camera color="#16a34a" size={22} />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-base font-semibold text-foreground">
+                    Phiên chụp đang hoạt động
+                  </Text>
+                  <Text className="text-sm text-muted-foreground mt-1">
+                    {currentSession.photobooth?.name || 'Photobooth'}
+                  </Text>
+                </View>
+              </View>
+              <View className="bg-primary/10 rounded-full px-3 py-1.5">
+                <Text className="text-xs font-semibold text-primary">
+                  {currentSession.status === 'active' ? 'Đang chụp' : 'Chờ bắt đầu'}
+                </Text>
+              </View>
+            </View>
+
+            <View className="bg-gray-50 rounded-xl p-3 mb-4">
+              <View className="flex-row justify-between items-center">
+                <Text className="text-sm text-muted-foreground">Ảnh đã chụp:</Text>
+                <Text className="text-base font-semibold text-foreground">
+                  {currentSession.photoCount} / {currentSession.maxPhotos}
+                </Text>
+              </View>
+              {currentSession.startedAt && (
+                <View className="flex-row justify-between items-center mt-2 pt-2 border-t border-gray-200">
+                  <Text className="text-sm text-muted-foreground">Bắt đầu lúc:</Text>
+                  <Text className="text-sm font-medium text-foreground">
+                    {new Date(currentSession.startedAt).toLocaleTimeString('vi-VN', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <Button
+              text="Tiếp tục chụp hình"
+              onPress={handleContinueCapture}
+              className="w-full"
+              icon={<Play color="#fff" size={20} />}
+            />
+          </View>
+        )}
+
         <View className="bg-white rounded-3xl py-5 w-full">
           <Text className="text-lg font-semibold text-foreground">
             Cùng chụp những bức hình đẹp
@@ -173,7 +266,7 @@ const HomeScreen = () => {
           />
         </View>
 
-        <View className="mt-6">
+        {/* <View className="mt-6">
           <View className="flex-row justify-between items-center mb-3">
             <Text className="text-lg font-semibold text-foreground">Lịch hẹn sắp tới</Text>
             <TouchableOpacity>
@@ -195,9 +288,9 @@ const HomeScreen = () => {
               </View>
             </View>
           ))}
-        </View>
+        </View> */}
 
-        <View className="mt-6 mb-0">
+        {/* <View className="mt-6 mb-0">
           <View className="flex-row justify-between items-center mb-3">
             <Text className="text-lg font-semibold text-foreground">Nguồn cảm hứng</Text>
             <TouchableOpacity>
@@ -220,7 +313,7 @@ const HomeScreen = () => {
               </View>
             ))}
           </ScrollView>
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );
