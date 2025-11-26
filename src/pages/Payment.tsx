@@ -1,7 +1,7 @@
 import { Button } from '@/components/common/Button';
 import { AppStackParamList } from '@/types/navigation.type';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowLeft } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -46,6 +46,7 @@ const PaymentScreen = () => {
           onPress={() => {
             // TODO: Implement payment logic
             console.log('Payment confirmed for:', qrData);
+            navigation.navigate('PhotoboothControl');
           }}
           className="w-full"
         />

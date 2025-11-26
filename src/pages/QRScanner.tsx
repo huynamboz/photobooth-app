@@ -40,9 +40,9 @@ const QRScannerScreen = () => {
       setHasPermission(permission === 'granted');
 
       // if it is idle for 15 secs, it will be closed
-      setTimeout(() => {
-        navigation.goBack();
-      }, 15 * 1000);
+      //   setTimeout(() => {
+      //     navigation.goBack();
+      //   }, 15 * 1000);
     };
 
     requestCameraPermission();

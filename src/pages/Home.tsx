@@ -10,11 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 type HomeNavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
-const insights = [
-  { id: 'sessions', label: 'Lượt chụp', value: '24', sub: 'Trong tháng', icon: Camera },
-  { id: 'points', label: 'Photopoint', value: '1.250', sub: 'Điểm thưởng', icon: CreditCard },
-  { id: 'studios', label: 'Studio yêu thích', value: '03', sub: 'Đã ghim', icon: MapPin },
-] as const;
+// insights sẽ được tính toán động dựa trên user data
 
 const highlightFeatures = [
   {
@@ -68,6 +64,21 @@ const HomeScreen = () => {
     return 'Chào buổi tối';
   }, []);
 
+  const insights = useMemo(
+    () => [
+      { id: 'sessions', label: 'Lượt chụp', value: '24', sub: 'Trong tháng', icon: Camera },
+      {
+        id: 'points',
+        label: 'Photopoint',
+        value: user?.points?.toLocaleString('vi-VN') ?? '0',
+        sub: 'Điểm thưởng',
+        icon: CreditCard,
+      },
+      { id: 'studios', label: 'Studio yêu thích', value: '03', sub: 'Đã ghim', icon: MapPin },
+    ],
+    [user?.points],
+  );
+
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20 }}>
@@ -92,9 +103,14 @@ const HomeScreen = () => {
             <View className="flex-row items-center justify-between">
               <View>
                 <Text className="text-white/70 text-xs uppercase tracking-wide">Photopoint</Text>
-                <Text className="text-white text-2xl font-semibold mt-1">1.250</Text>
+                <Text className="text-white text-2xl font-semibold mt-1">
+                  {user?.points?.toLocaleString('vi-VN') ?? '0'}
+                </Text>
               </View>
-              <TouchableOpacity className="bg-white rounded-2xl px-4 py-2 flex-row items-center shadow-sm">
+              <TouchableOpacity
+                onPress={() => navigation.navigate('TopUpPoints')}
+                className="bg-white rounded-2xl px-4 py-2 flex-row items-center shadow-sm"
+              >
                 <Text className="text-emerald-600 font-medium mr-2">Nạp thêm</Text>
                 <ArrowRight color="#059669" size={16} />
               </TouchableOpacity>

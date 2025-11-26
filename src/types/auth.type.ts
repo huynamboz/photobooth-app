@@ -2,8 +2,17 @@ export interface User {
   id: string;
   email: string | null;
   name: string | null;
+  phone?: string | null;
+  address?: string | null;
+  points?: number;
+  paymentCode?: string;
   photoURL?: string | null;
   provider?: 'github' | 'facebook' | 'twitter' | 'email' | string;
+  role?: {
+    id: string;
+    name: string;
+    description?: string;
+  };
   [key: string]: any;
 }
 
@@ -15,10 +24,8 @@ export interface AuthStore {
 
   login: (email: string, password: string) => Promise<void>;
   register: (payload: { name: string; email: string; password: string }) => Promise<void>;
-  loginWithGithub: () => Promise<void>;
-  loginWithFacebook: () => Promise<void>;
-  loginWithX: () => Promise<void>;
   checkAuthState: () => Promise<boolean>;
+  getCurrentUser: () => Promise<User>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
 }

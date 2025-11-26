@@ -9,6 +9,8 @@ export type AppStackParamList = {
   HomeScreen: undefined;
   QRScanner: undefined;
   Payment: { qrData: string };
+  PhotoboothControl: undefined;
+  TopUpPoints: undefined;
 };
 
 export type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
