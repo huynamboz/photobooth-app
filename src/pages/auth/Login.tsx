@@ -1,4 +1,3 @@
-import Icons from '@/assets/icon';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { ApiError } from '@/services/apiClient';
@@ -9,7 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback, useState } from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -27,8 +25,8 @@ const LoginScreen = () => {
   const login = useAuthStore((state) => state.login);
   const isLoading = useAuthStore((state) => state.isLoading);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('nam@gmail.com');
+  const [password, setPassword] = useState('12345678');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleLogin = useCallback(async () => {
@@ -53,10 +51,6 @@ const LoginScreen = () => {
       }
     }
   }, [email, password, login, resetOnboarding]);
-
-  const handleSocialLoginPress = useCallback((provider: string) => {
-    Alert.alert('Sắp ra mắt', `Đăng nhập bằng ${provider} đang được phát triển.`);
-  }, []);
 
   const canSubmit = email.trim().length > 0 && password.length >= 8 && !isLoading;
 
@@ -107,39 +101,6 @@ const LoginScreen = () => {
                 <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
                   <Text className="text-primary font-semibold ml-2">Đăng ký</Text>
                 </TouchableOpacity>
-              </View>
-
-              <View className="mt-10">
-                <Text className="text-center text-gray-500 mb-4">Hoặc đăng nhập bằng</Text>
-                <View className="flex flex-col gap-4">
-                  <Button
-                    text="Đăng nhập bằng Google"
-                    onPress={() => handleSocialLoginPress('Google')}
-                    variant="text"
-                    className="border rounded-xl w-full"
-                    contentClassName="justify-start"
-                    icon={Icons.google}
-                    disabled={isLoading}
-                  />
-                  <Button
-                    text="Đăng nhập bằng X"
-                    onPress={() => handleSocialLoginPress('X')}
-                    variant="text"
-                    className="border rounded-xl w-full"
-                    contentClassName="justify-start"
-                    icon={Icons.twitter}
-                    disabled={isLoading}
-                  />
-                  <Button
-                    text="Đăng nhập bằng Facebook"
-                    onPress={() => handleSocialLoginPress('Facebook')}
-                    variant="text"
-                    className="border rounded-xl w-full"
-                    contentClassName="justify-start"
-                    icon={Icons.facebook}
-                    disabled={isLoading}
-                  />
-                </View>
               </View>
             </View>
           </View>

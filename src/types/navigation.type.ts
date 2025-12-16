@@ -11,6 +11,7 @@ export type AppStackParamList = {
   PrepareCapture: { qrData: string };
   PhotoboothControl: { sessionId: string; photoboothId: string };
   TopUpPoints: undefined;
+  SessionDetail: { sessionId: string };
 };
 
 export type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;

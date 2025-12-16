@@ -5,7 +5,7 @@ import { AppStackParamList } from '@/types/navigation.type';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Sparkles, X } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -59,6 +59,8 @@ const PhotoboothControlScreen = () => {
   const [currentFilterIds, setCurrentFilterIds] = useState<string[]>([]);
   const [isChangingFilter, setIsChangingFilter] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [hasStartedCapture, setHasStartedCapture] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handleStartCapture = async () => {
     if (isCapturing) return;
@@ -66,8 +68,13 @@ const PhotoboothControlScreen = () => {
     setIsCapturing(true);
     try {
       console.log('Starting capture for session:', sessionId, 'photobooth:', photoboothId);
+
+      // Start capture only (session should already be started from PrepareCapture)
       const response = await photoboothService.startCapture(sessionId);
       console.log('Start capture response:', response);
+
+      // Mark that capture has been started
+      setHasStartedCapture(true);
 
       // Show success message
       Alert.alert('Thành công', 'Đã gửi lệnh chụp hình. Photobooth sẽ bắt đầu chụp ảnh.', [
@@ -204,6 +211,75 @@ const PhotoboothControlScreen = () => {
     fetchCurrentSession();
   }, [sessionId]);
 
+  // Poll session status to check if it's still active
+  useEffect(() => {
+    const checkSessionStatus = async () => {
+      try {
+        const session = await photoboothService.getSession(sessionId);
+        // Check if session is not active (status !== 'active')
+        // Also handle case where session might have an 'active' boolean field
+        const isActive = session.status === 'active' || (session as any).active === true;
+
+        if (!isActive) {
+          // Clear interval
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+
+          // Reset navigation to home and navigate to history tab
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'app',
+                  state: {
+                    routes: [{ name: ROUTE_NAME.HISTORY }],
+                    index: 0,
+                  },
+                },
+              ],
+            }),
+          );
+        }
+      } catch (error) {
+        console.error('Error checking session status:', error);
+        // If session not found or error, also navigate away
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'app',
+                state: {
+                  routes: [{ name: ROUTE_NAME.HISTORY }],
+                  index: 0,
+                },
+              },
+            ],
+          }),
+        );
+      }
+    };
+
+    // Set up interval to check session status every 3 seconds
+    intervalRef.current = setInterval(checkSessionStatus, 3000);
+
+    // Cleanup interval on unmount
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [sessionId, navigation]);
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
@@ -291,19 +367,32 @@ const PhotoboothControlScreen = () => {
 
       {/* Bottom Action Buttons */}
       <View className="px-6 pt-4 pb-6 border-t border-border bg-white">
-        <Button
-          text={isCapturing ? 'Đang chụp...' : 'Bắt đầu chụp'}
-          onPress={handleStartCapture}
-          className="w-full mb-3"
-          icon={<Sparkles color="#fff" size={20} />}
-          disabled={isCapturing}
-        />
-        <Button
-          text="Hủy chụp"
-          onPress={handleCancelPress}
-          variant="destructive"
-          className="w-full"
-        />
+        {!hasStartedCapture && (
+          <Button
+            text={isCapturing ? 'Đang bắt đầu...' : 'Bắt đầu chụp'}
+            onPress={handleStartCapture}
+            className="w-full mb-3"
+            icon={<Sparkles color="#fff" size={20} />}
+            disabled={isCapturing}
+          />
+        )}
+        {hasStartedCapture && (
+          <Button
+            text="Đang trong phiên chụp"
+            onPress={() => {}}
+            className="w-full mb-3"
+            icon={<Sparkles color="#fff" size={20} />}
+            disabled={true}
+          />
+        )}
+        {!hasStartedCapture && (
+          <Button
+            text="Hủy chụp"
+            onPress={handleCancelPress}
+            variant="destructive"
+            className="w-full"
+          />
+        )}
         <Text className="text-xs text-muted-foreground text-center mt-3">
           Ảnh sẽ được gửi về điện thoại của bạn sau khi chụp
         </Text>

@@ -130,7 +130,17 @@ const useAuthStore = create<AuthStore>()(
         }
       },
 
-      logout: async () => {},
+      logout: async () => {
+        // Clear auth token from API client
+        setAuthToken(null);
+        // Clear all auth state
+        set({
+          token: null,
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+        });
+      },
 
       setUser: (user) => {
         set({ user });

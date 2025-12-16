@@ -3,4 +3,5 @@ export const ROUTE_NAME = {
   REGISTER: 'Register',
   HOMESCREEN: 'HomeScreen',
   SETTINGS: 'SettingsScreen',
+  HISTORY: 'HistoryScreen',
 } as const;

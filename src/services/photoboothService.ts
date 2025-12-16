@@ -49,6 +49,38 @@ export interface ChangeFilterRequest {
   filterId: string;
 }
 
+export interface UserSessionResponse extends SessionResponse {
+  photobooth?: {
+    id: string;
+    name: string;
+    status: string;
+  };
+  photos?: Array<{
+    id: string;
+    imageUrl: string;
+    order: number;
+    caption?: string;
+  }>;
+  filterIds?: string[];
+}
+
+export interface GetUserSessionsParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: 'pending' | 'active' | 'completed' | 'cancelled' | 'expired';
+}
+
+export interface GetUserSessionsResponse {
+  data: UserSessionResponse[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export const photoboothService = {
   async createSession(payload: CreateSessionRequest): Promise<SessionResponse> {
     try {
@@ -165,6 +197,47 @@ export const photoboothService = {
         throw error;
       }
       throw new ApiError('Failed to cancel session. Please try again.');
+    }
+  },
+
+  async getUserSessions(params?: GetUserSessionsParams): Promise<GetUserSessionsResponse> {
+    try {
+      const queryParams = new URLSearchParams();
+      if (params?.page) {
+        queryParams.append('page', params.page.toString());
+      }
+      if (params?.limit) {
+        queryParams.append('limit', params.limit.toString());
+      }
+      if (params?.search) {
+        queryParams.append('search', params.search);
+      }
+      if (params?.status) {
+        queryParams.append('status', params.status);
+      }
+
+      const url = `/photobooth/sessions${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      const response = await apiClient.get<GetUserSessionsResponse>(url);
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError('Failed to get user sessions. Please try again.');
+    }
+  },
+
+  async getSession(sessionId: string): Promise<UserSessionResponse> {
+    try {
+      const response = await apiClient.get<UserSessionResponse>(
+        `/photobooth/sessions/${sessionId}`,
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError('Failed to get session. Please try again.');
     }
   },
 };

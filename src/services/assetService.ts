@@ -32,6 +32,38 @@ export interface GetFiltersParams {
   limit?: number;
 }
 
+export interface FrameAsset {
+  id: string;
+  imageUrl: string;
+  publicId: string;
+  type: string;
+  filterType: string | null;
+  scale: string | null;
+  offset_y: string | null;
+  anchor_idx: number | null;
+  left_idx: number | null;
+  right_idx: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FramesResponse {
+  data: FrameAsset[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+export interface GetFramesParams {
+  page?: number;
+  limit?: number;
+}
+
 export const assetService = {
   async getFilters(params?: GetFiltersParams): Promise<FiltersResponse> {
     try {
@@ -51,6 +83,27 @@ export const assetService = {
         throw error;
       }
       throw new ApiError('Failed to get filters. Please try again.');
+    }
+  },
+
+  async getFrames(params?: GetFramesParams): Promise<FramesResponse> {
+    try {
+      const queryParams = new URLSearchParams();
+      if (params?.page) {
+        queryParams.append('page', params.page.toString());
+      }
+      if (params?.limit) {
+        queryParams.append('limit', params.limit.toString());
+      }
+
+      const url = `/assets/frames${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      const response = await apiClient.get<FramesResponse>(url);
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError('Failed to get frames. Please try again.');
     }
   },
 };

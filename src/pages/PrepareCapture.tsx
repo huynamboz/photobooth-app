@@ -351,16 +351,16 @@ const PrepareCaptureScreen = () => {
       // Step 1: Create session
       const session = await photoboothService.createSession({
         photoboothId,
-        maxPhotos: 5, // Default max photos
+        maxPhotos: 4, // Default max photos
       });
 
       // Step 2: Start session
-      const startedSession = await photoboothService.startSession(session.id);
+      await photoboothService.startSession(session.id);
 
-      // Step 3: Navigate to PhotoboothControl with session info
+      // Navigate to PhotoboothControl with session info
       navigation.navigate('PhotoboothControl', {
-        sessionId: startedSession.id,
-        photoboothId: startedSession.photoboothId,
+        sessionId: session.id,
+        photoboothId: session.photoboothId,
       });
     } catch (error: any) {
       console.error('Error creating/starting session:', error);

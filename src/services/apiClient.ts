@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
-const API_BASE_URL = process.env.API_BASE_URL ?? 'https://2fd2kqkt-3000.asse.devtunnels.ms/api/v1';
+const API_BASE_URL = 'https://photobooth.kazekageiii.xyz/api/v1';
 
 const REQUEST_TIMEOUT = 15000;
 
@@ -34,6 +34,8 @@ const apiClient: AxiosInstance = axios.create({
 });
 
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  // console log url
+  console.log('config.url', config.url);
   if (!config.headers) {
     config.headers = {};
   }

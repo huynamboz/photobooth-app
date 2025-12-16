@@ -1,6 +1,7 @@
 import PhotoboothControlScreen from '@/pages/PhotoboothControl';
 import PrepareCaptureScreen from '@/pages/PrepareCapture';
 import QRScannerScreen from '@/pages/QRScanner';
+import SessionDetailScreen from '@/pages/SessionDetail';
 import TopUpPointsScreen from '@/pages/TopUpPoints';
 import { useAuthStore } from '@/store';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -52,6 +53,7 @@ const AppNavigation = () => {
           <Stack.Screen name="PrepareCapture" component={PrepareCaptureScreen} />
           <Stack.Screen name="PhotoboothControl" component={PhotoboothControlScreen} />
           <Stack.Screen name="TopUpPoints" component={TopUpPointsScreen} />
+          <Stack.Screen name="SessionDetail" component={SessionDetailScreen} />
         </>
       ) : (
         <Stack.Screen name="auth" component={AuthNavigvation} />

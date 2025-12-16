@@ -1,9 +1,14 @@
 import { ROUTE_NAME } from '@/constants';
+import HistoryScreen from '@/pages/History';
 import HomeScreen from '@/pages/Home';
 import SettingsScreen from '@/pages/Settings';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  History as HistoryIcon,
+  Home as HomeIcon,
+  Settings as SettingsIcon,
+} from 'lucide-react-native';
 import React from 'react';
-import { Home as HomeIcon, Settings as SettingsIcon } from 'lucide-react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,6 +20,7 @@ const TabNavigation = () => {
         tabBarIcon: ({ color, size }) => {
           const iconMap: Record<string, React.ComponentType<{ color: string; size: number }>> = {
             [ROUTE_NAME.HOMESCREEN]: HomeIcon,
+            [ROUTE_NAME.HISTORY]: HistoryIcon,
             [ROUTE_NAME.SETTINGS]: SettingsIcon,
           };
           const IconComponent = iconMap[route.name] ?? HomeIcon;
@@ -28,6 +34,11 @@ const TabNavigation = () => {
         name={ROUTE_NAME.HOMESCREEN}
         component={HomeScreen}
         options={{ title: 'Trang chủ' }}
+      />
+      <Tab.Screen
+        name={ROUTE_NAME.HISTORY}
+        component={HistoryScreen}
+        options={{ title: 'Lịch sử' }}
       />
       <Tab.Screen
         name={ROUTE_NAME.SETTINGS}
