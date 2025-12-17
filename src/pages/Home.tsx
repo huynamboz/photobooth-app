@@ -4,15 +4,7 @@ import { useAuthStore } from '@/store';
 import { AppStackParamList } from '@/types/navigation.type';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import {
-  Aperture,
-  ArrowRight,
-  Camera,
-  CreditCard,
-  MapPin,
-  Play,
-  QrCode,
-} from 'lucide-react-native';
+import { Aperture, ArrowRight, Camera, CreditCard, Play, QrCode } from 'lucide-react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -108,7 +100,7 @@ const HomeScreen = () => {
         sub: 'Điểm thưởng',
         icon: CreditCard,
       },
-      { id: 'studios', label: 'Studio yêu thích', value: '03', sub: 'Đã ghim', icon: MapPin },
+      // { id: 'studios', label: 'Studio yêu thích', value: '03', sub: 'Đã ghim', icon: MapPin },
     ],
     [user?.points],
   );

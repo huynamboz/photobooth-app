@@ -51,7 +51,6 @@ const PhotoboothControlScreen = () => {
   const { sessionId, photoboothId } = route.params;
   // photoboothId may be used in future features
   const [filters, setFilters] = useState<FilterAsset[]>([DEFAULT_FILTER]);
-  const [selectedFilter, setSelectedFilter] = useState<string>('none');
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isLoadingFilters, setIsLoadingFilters] = useState(true);
   const [filterError, setFilterError] = useState<string | null>(null);
@@ -131,7 +130,7 @@ const PhotoboothControlScreen = () => {
   };
 
   const handleFilterSelect = async (filterId: string) => {
-    if (isChangingFilter || filterId === selectedFilter) return;
+    if (isChangingFilter) return;
 
     setIsChangingFilter(true);
     try {
@@ -145,20 +144,19 @@ const PhotoboothControlScreen = () => {
           await Promise.all(removePromises);
         }
         setCurrentFilterIds([]);
-        setSelectedFilter('none');
       } else {
-        // Remove all current filters first (to ensure only one filter is active)
-        const removePromises = currentFilterIds.map((id) =>
-          photoboothService.removeFilter(sessionId, id),
-        );
-        if (removePromises.length > 0) {
-          await Promise.all(removePromises);
-        }
+        // Toggle filter: if already selected, remove it; if not, add it
+        const isCurrentlySelected = currentFilterIds.includes(filterId);
 
-        // Add the new filter
-        await photoboothService.addFilter(sessionId, filterId);
-        setCurrentFilterIds([filterId]);
-        setSelectedFilter(filterId);
+        if (isCurrentlySelected) {
+          // Remove the filter
+          await photoboothService.removeFilter(sessionId, filterId);
+          setCurrentFilterIds(currentFilterIds.filter((id) => id !== filterId));
+        } else {
+          // Add the filter
+          await photoboothService.addFilter(sessionId, filterId);
+          setCurrentFilterIds([...currentFilterIds, filterId]);
+        }
       }
     } catch (error) {
       console.error('Error changing filter:', error);
@@ -195,12 +193,6 @@ const PhotoboothControlScreen = () => {
           // Sync current filterIds with session
           const filterIds = session.filterIds || [];
           setCurrentFilterIds(filterIds);
-          // If there's a filter selected, set it as selected
-          if (filterIds.length > 0) {
-            setSelectedFilter(filterIds[0]);
-          } else {
-            setSelectedFilter('none');
-          }
         }
       } catch (error) {
         console.error('Error fetching current session:', error);
@@ -211,8 +203,18 @@ const PhotoboothControlScreen = () => {
     fetchCurrentSession();
   }, [sessionId]);
 
-  // Poll session status to check if it's still active
+  // Poll session status to check if it's still active (only when session has started)
   useEffect(() => {
+    // Only start polling when session has been started
+    if (!hasStartedCapture) {
+      // Clear any existing interval if capture hasn't started
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
     const checkSessionStatus = async () => {
       try {
         const session = await photoboothService.getSession(sessionId);
@@ -271,14 +273,14 @@ const PhotoboothControlScreen = () => {
     // Set up interval to check session status every 3 seconds
     intervalRef.current = setInterval(checkSessionStatus, 3000);
 
-    // Cleanup interval on unmount
+    // Cleanup interval on unmount or when hasStartedCapture changes
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };
-  }, [sessionId, navigation]);
+  }, [sessionId, navigation, hasStartedCapture]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -317,7 +319,10 @@ const PhotoboothControlScreen = () => {
           ) : (
             <View className="flex-row flex-wrap" style={{ gap: 12 }}>
               {filters.map((filter) => {
-                const isSelected = selectedFilter === filter.id;
+                const isSelected =
+                  filter.id === 'none'
+                    ? currentFilterIds.length === 0
+                    : currentFilterIds.includes(filter.id);
                 const isNoneFilter = filter.id === 'none';
                 return (
                   <TouchableOpacity

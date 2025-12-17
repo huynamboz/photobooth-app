@@ -81,6 +81,18 @@ export interface GetUserSessionsResponse {
   };
 }
 
+export interface PhotoboothResponse {
+  id: string;
+  name: string;
+  status: string;
+  location?: string;
+  description?: string;
+  isActive?: boolean;
+  currentSessionId?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export const photoboothService = {
   async createSession(payload: CreateSessionRequest): Promise<SessionResponse> {
     try {
@@ -238,6 +250,18 @@ export const photoboothService = {
         throw error;
       }
       throw new ApiError('Failed to get session. Please try again.');
+    }
+  },
+
+  async getAvailablePhotobooths(): Promise<PhotoboothResponse[]> {
+    try {
+      const response = await apiClient.get<PhotoboothResponse[]>('/photobooth/available');
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError('Failed to get available photobooths. Please try again.');
     }
   },
 };

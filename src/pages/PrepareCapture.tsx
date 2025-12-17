@@ -1,12 +1,17 @@
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
-import { bankService, photoboothService, type BankInfoResponse } from '@/services';
+import {
+  bankService,
+  photoboothService,
+  type BankInfoResponse,
+  type PhotoboothResponse,
+} from '@/services';
 import { useAuthStore } from '@/store';
 import { AppStackParamList } from '@/types/navigation.type';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowLeft, Copy, QrCode, Wallet } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -326,14 +331,72 @@ const PrepareCaptureScreen = () => {
   const [hasEnoughPoints, setHasEnoughPoints] = useState(false);
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [photoboothId, setPhotoboothId] = useState<string | null>(null);
+  const [photobooth, setPhotobooth] = useState<PhotoboothResponse | null>(null);
+  const [isLoadingPhotobooth, setIsLoadingPhotobooth] = useState(false);
 
   useEffect(() => {
     // Parse QR data to get photoboothId
     // Assuming qrData is the photoboothId (UUID format)
     // If QR has different format, adjust parsing logic here
-    setPhotoboothId(qrData.trim());
+    const id = qrData.trim();
+    setPhotoboothId(id);
     checkPoints();
+
+    // Fetch photobooth details when we have the ID
+    if (id) {
+      fetchPhotoboothDetails(id);
+    }
   }, [qrData, user?.points]);
+
+  // Update points when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const updatePoints = async () => {
+        try {
+          await getCurrentUser();
+          checkPoints();
+        } catch (error) {
+          console.error('Error updating points:', error);
+        }
+      };
+      updatePoints();
+    }, [getCurrentUser]),
+  );
+
+  const fetchPhotoboothDetails = async (id: string) => {
+    setIsLoadingPhotobooth(true);
+    try {
+      const response = await photoboothService.getAvailablePhotobooths();
+      console.log('response', response);
+      // Filter photobooth by id from QR code
+      const foundPhotobooth = response.find((pb) => pb.id === id);
+      if (foundPhotobooth) {
+        setPhotobooth(foundPhotobooth);
+      } else {
+        // If not found in available list, still show basic info with photoboothId
+        console.warn('Photobooth not found in available list:', id);
+        setPhotobooth({
+          id,
+          name: `Photobooth ${id.slice(0, 8)}...`,
+          status: 'unavailable',
+          location: '',
+          description: '',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching photobooth details:', error);
+      // Even on error, show basic info with photoboothId
+      setPhotobooth({
+        id,
+        name: `Photobooth ${id.slice(0, 8)}...`,
+        status: 'unknown',
+        location: '',
+        description: '',
+      });
+    } finally {
+      setIsLoadingPhotobooth(false);
+    }
+  };
 
   const checkPoints = () => {
     const currentPoints = user?.points ?? 0;
@@ -388,13 +451,114 @@ const PrepareCaptureScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 24 }}>
-        {/* QR Data Info */}
-        <View className="bg-white rounded-3xl border border-border p-6 mb-6">
-          <Text className="text-sm text-muted-foreground mb-2">Mã QR đã quét</Text>
-          <View className="bg-gray-50 rounded-2xl p-4 mb-4">
-            <Text className="text-base font-mono text-foreground break-all">{qrData}</Text>
+        {/* Photobooth Info */}
+        {isLoadingPhotobooth ? (
+          <View className="bg-white rounded-3xl border border-border p-6 mb-6 items-center">
+            <ActivityIndicator size="small" color="#16a34a" />
+            <Text className="text-sm text-muted-foreground mt-2">
+              Đang tải thông tin photobooth...
+            </Text>
           </View>
-        </View>
+        ) : photobooth ? (
+          <View
+            className={`rounded-3xl border p-6 mb-6 ${
+              photobooth.status === 'available'
+                ? 'bg-blue-50 border-blue-200'
+                : 'bg-gray-50 border-gray-200'
+            }`}
+          >
+            <View className="flex-row items-center mb-3">
+              <QrCode color={photobooth.status === 'available' ? '#1e40af' : '#6b7280'} size={20} />
+              <Text
+                className={`text-base font-semibold ml-2 ${
+                  photobooth.status === 'available' ? 'text-blue-900' : 'text-gray-900'
+                }`}
+              >
+                Thông tin Photobooth
+              </Text>
+            </View>
+            <View style={{ gap: 8 }}>
+              <View className="flex-row justify-between">
+                <Text
+                  className={`text-sm ${
+                    photobooth.status === 'available' ? 'text-blue-800' : 'text-gray-700'
+                  }`}
+                >
+                  Tên:
+                </Text>
+                <Text
+                  className={`text-sm font-medium ${
+                    photobooth.status === 'available' ? 'text-blue-900' : 'text-gray-900'
+                  }`}
+                >
+                  {photobooth.name}
+                </Text>
+              </View>
+              {photobooth.location && (
+                <View className="flex-row justify-between">
+                  <Text
+                    className={`text-sm ${
+                      photobooth.status === 'available' ? 'text-blue-800' : 'text-gray-700'
+                    }`}
+                  >
+                    Vị trí:
+                  </Text>
+                  <Text
+                    className={`text-sm font-medium ${
+                      photobooth.status === 'available' ? 'text-blue-900' : 'text-gray-900'
+                    }`}
+                  >
+                    {photobooth.location}
+                  </Text>
+                </View>
+              )}
+              <View className="flex-row justify-between">
+                <Text
+                  className={`text-sm ${
+                    photobooth.status === 'available' ? 'text-blue-800' : 'text-gray-700'
+                  }`}
+                >
+                  Trạng thái:
+                </Text>
+                <Text
+                  className={`text-sm font-medium ${
+                    photobooth.status === 'available'
+                      ? 'text-green-600'
+                      : photobooth.status === 'unavailable'
+                        ? 'text-red-600'
+                        : 'text-gray-600'
+                  }`}
+                >
+                  {photobooth.status === 'available'
+                    ? 'Sẵn sàng'
+                    : photobooth.status === 'unavailable'
+                      ? 'Không khả dụng'
+                      : photobooth.status === 'unknown'
+                        ? 'Không xác định'
+                        : photobooth.status}
+                </Text>
+              </View>
+              {photobooth.description && (
+                <View className="mt-2 pt-2 border-t border-gray-200">
+                  <Text
+                    className={`text-sm mb-1 ${
+                      photobooth.status === 'available' ? 'text-blue-800' : 'text-gray-700'
+                    }`}
+                  >
+                    Mô tả:
+                  </Text>
+                  <Text
+                    className={`text-sm font-medium ${
+                      photobooth.status === 'available' ? 'text-blue-900' : 'text-gray-900'
+                    }`}
+                  >
+                    {photobooth.description}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+        ) : null}
 
         {/* Points Status */}
         {hasEnoughPoints ? (
@@ -472,7 +636,7 @@ const PrepareCaptureScreen = () => {
                 <QrCode color="#fff" size={20} />
               )
             }
-            disabled={isCreatingSession}
+            disabled={isCreatingSession || photobooth?.status !== 'available'}
           />
         ) : (
           <Button
